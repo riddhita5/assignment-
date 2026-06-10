@@ -1,0 +1,61 @@
+import 'package:flutter/material.dart';
+
+class FoodCategoryScreen2 extends StatelessWidget {
+  FoodCategoryScreen2({super.key});
+
+  final List<Map<String, dynamic>> categories = [
+    {"title": "Pizza", "icon": Icons.local_pizza},
+    {"title": "Biryani", "icon": Icons.rice_bowl},
+    {"title": "Burger", "icon": Icons.lunch_dining},
+    {"title": "Desserts", "icon": Icons.icecream},
+    {"title": "Chinese", "icon": Icons.ramen_dining},
+    {"title": "South Indian", "icon": Icons.restaurant},
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    int crossAxisCount =
+    MediaQuery.of(context).size.width > 600 ? 3 : 2;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Food Categories"),
+      ),
+
+      body: GridView.count(
+        crossAxisCount: crossAxisCount,
+
+
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+
+        padding: const EdgeInsets.all(12),
+
+        children: categories.map((category) {
+          return Card(
+            elevation: 4,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  category["icon"],
+                  size: 50,
+                ),
+
+                const SizedBox(height: 10),
+
+                Text(
+                  category["title"],
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+}
