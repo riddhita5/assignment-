@@ -1,0 +1,102 @@
+import 'package:flutter/material.dart';
+
+class FoodCategoryScreen4 extends StatelessWidget {
+  FoodCategoryScreen4({super.key});
+
+  final List<Map<String, String>> categories = [
+    {
+      "title": "Pizza",
+      "image":
+      "https://images.unsplash.com/photo-1513104890138-7c749659a591",
+    },
+    {
+      "title": "Biryani",
+      "image":
+      "https://images.unsplash.com/photo-1631515243349-e0cb75fb8d3a",
+    },
+    {
+      "title": "Burger",
+      "image":
+      "https://images.unsplash.com/photo-1568901346375-23c9450c58cd",
+    },
+    {
+      "title": "Desserts",
+      "image":
+      "https://images.unsplash.com/photo-1551024601-bec78aea704b",
+    },
+    {
+      "title": "Chinese",
+      "image":
+      "https://images.unsplash.com/photo-1512058564366-18510be2db19",
+    },
+    {
+      "title": "South Indian",
+      "image":
+      "https://images.unsplash.com/photo-1601050690597-df0568f70950",
+    },
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    int crossAxisCount =
+    MediaQuery.of(context).size.width > 600 ? 3 : 2;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Food Categories"),
+      ),
+
+      body: GridView.count(
+        crossAxisCount: crossAxisCount,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+        padding: const EdgeInsets.all(12),
+
+        children: categories.map((category) {
+          return CategoryCard(
+            title: category["title"]!,
+            image: category["image"]!,
+          );
+        }).toList(),
+      ),
+    );
+  }
+}
+class CategoryCard extends StatelessWidget {
+  final String title;
+  final String image;
+
+  const CategoryCard({
+    super.key,
+    required this.title,
+    required this.image,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 4,
+
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CircleAvatar(
+            radius: 35,
+            backgroundImage: NetworkImage(image),
+          ),
+
+          const SizedBox(height: 12),
+
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+}
