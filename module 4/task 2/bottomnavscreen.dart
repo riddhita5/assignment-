@@ -1,0 +1,46 @@
+import 'package:flutter/material.dart';
+
+class CustomBottomNav extends StatelessWidget {
+  final int currentIndex;
+  final Function(int) onTap;
+
+  const CustomBottomNav({
+    super.key,
+    required this.currentIndex,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return BottomNavigationBar(
+      currentIndex: currentIndex,
+
+      selectedItemColor: Colors.green,
+      unselectedItemColor: Colors.grey,
+
+      type: BottomNavigationBarType.fixed,
+
+      onTap: onTap,
+
+      items: const [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.music_note_outlined),
+          activeIcon: Icon(Icons.music_note),
+          label: "Songs",
+        ),
+
+        BottomNavigationBarItem(
+          icon: Icon(Icons.album_outlined),
+          activeIcon: Icon(Icons.album),
+          label: "Albums",
+        ),
+
+        BottomNavigationBarItem(
+          icon: Icon(Icons.person_outline),
+          activeIcon: Icon(Icons.person),
+          label: "Profile",
+        ),
+      ],
+    );
+  }
+}
