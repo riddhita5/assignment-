@@ -1,0 +1,97 @@
+
+import 'package:flutter/material.dart';
+
+class IPLTeamsScreen2 extends StatelessWidget {
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Trending IPL Teams"),
+      ),
+      body: ListView(
+        children: [
+          Padding(
+            padding: EdgeInsets.all(8),
+            child: Card(
+              child: ListTile(
+                leading: Icon(Icons.sports_cricket),
+                title: Text("Chennai Super Kings"),
+              ),
+            ),
+          ),
+
+          Padding(
+            padding: EdgeInsets.all(8),
+            child: Card(
+              child: ListTile(
+                leading: Icon(Icons.sports_cricket),
+                title: Text("Mumbai Indians"),
+              ),
+            ),
+          ),
+
+          Padding(
+            padding: EdgeInsets.all(8),
+            child: Card(
+              child: ListTile(
+                leading: Icon(Icons.sports_cricket),
+                title: Text("Royal Challengers Bengaluru"),
+              ),
+            ),
+          ),
+
+          Padding(
+            padding: EdgeInsets.all(8),
+            child: Card(
+              child: ListTile(
+                leading: Icon(Icons.sports_cricket),
+                title: Text("Kolkata Knight Riders"),
+              ),
+            ),
+          ),
+
+          Padding(
+            padding: EdgeInsets.all(8),
+            child: Card(
+              child: ListTile(
+                leading: Icon(Icons.sports_cricket),
+                title: Text("Rajasthan Royals"),
+              ),
+            ),
+          ),
+
+          Padding(
+            padding: EdgeInsets.all(8),
+            child: Card(
+              child: ListTile(
+                leading: Icon(Icons.sports_cricket),
+                title: Text("Sunrisers Hyderabad"),
+              ),
+            ),
+          ),
+
+          Padding(
+            padding: EdgeInsets.all(8),
+            child: Card(
+              child: ListTile(
+                leading: Icon(Icons.sports_cricket),
+                title: Text("Delhi Capitals"),
+              ),
+            ),
+          ),
+
+          Padding(
+            padding: EdgeInsets.all(8),
+            child: Card(
+              child: ListTile(
+                leading: Icon(Icons.sports_cricket),
+                title: Text("Punjab Kings"),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
