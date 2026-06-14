@@ -1,0 +1,62 @@
+import 'package:flutter/material.dart';
+
+class Screen extends StatelessWidget {
+  const Screen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Navigation Drawer Demo"),
+      ),
+
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            const UserAccountsDrawerHeader(
+              currentAccountPicture: CircleAvatar(
+                backgroundImage: NetworkImage(
+                  "https://i.pravatar.cc/150?img=3",
+                ),
+              ),
+              accountName: Text("Riddhita Gosai"),
+              accountEmail: Text("riddhita@example.com"),
+            ),
+
+            ListTile(
+              leading: const Icon(Icons.home),
+              title: const Text("Home"),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+
+            ListTile(
+              leading: const Icon(Icons.person),
+              title: const Text("Profile"),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+
+            ListTile(
+              leading: const Icon(Icons.settings),
+              title: const Text("Settings"),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      ),
+
+      body: const Center(
+        child: Text(
+          "Swipe from left or tap the menu icon",
+          style: TextStyle(fontSize: 18),
+        ),
+      ),
+    );
+  }
+}
