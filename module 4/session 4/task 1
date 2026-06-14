@@ -1,0 +1,47 @@
+import 'package:flutter/material.dart';
+
+class FoodScreen extends StatelessWidget {
+  FoodScreen({super.key});
+
+  final List<String> foodItems = [
+    "Pizza",
+    "Burger",
+    "Dosa",
+    "Pasta",
+    "Sandwich",
+    "Biryani",
+    "Noodles",
+    "Momos",
+    "Pav Bhaji",
+    "Ice Cream",
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Food Menu"),
+      ),
+      body: ListView.builder(
+        itemCount: foodItems.length,
+        itemBuilder: (context, index) {
+          return InkWell(
+            onTap: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    "${foodItems[index]} tapped",
+                  ),
+                ),
+              );
+            },
+            child: ListTile(
+              leading: const Icon(Icons.fastfood),
+              title: Text(foodItems[index]),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
