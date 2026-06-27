@@ -1,0 +1,17 @@
+Que 3. Explain in your own words the difference between storing data in a simple key-value store (like Hive) versus a structured relational database (like SQLite), using an example from any app you use daily (such as playlists in Spotify or orders in Swiggy).
+
+Ans :-) Hive is a key-value database, while SQLite is a relational database.
+
+Hive stores data in a simple key-value format. It is fast and easy to use for storing small amounts of data such as user settings, dark mode, login status, or favorite items. It does not require tables or SQL queries.
+
+SQLite stores data in tables with rows and columns. It uses SQL queries and is suitable for storing structured data with relationships between different tables.
+
+Example (Spotify)
+
+In Spotify, Hive can be used to save the user's dark mode setting or language preference because these are simple values.
+
+SQLite can be used to store playlists. A playlist contains many songs, and each song has details like song name, artist, album, and duration. Since this data is structured and related, SQLite is a better choice.
+
+  
+Conclusion
+Use Hive for simple and lightweight data, and use SQLite for large, structured, and relational data. 
