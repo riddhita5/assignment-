@@ -1,0 +1,22 @@
+										Tasks
+
+Que 1.  List 3 real-world scenarios where your favorite apps (like Zomato, WhatsApp, or Spotify) use local storage to improve user experience when there is no internet connection, and explain in 1-2 lines how local storage helps in each case.
+
+Ans :-)  
+
+Example:
+
+1. WhatsApp
+
+WhatsApp stores chats and media files locally on the device.
+This allows users to read previous messages even when there is no internet connection.
+
+2. Spotify
+
+Spotify saves downloaded songs in local storage.
+Users can listen to their favorite music offline without internet.
+
+3. Zomato
+
+Zomato caches recently viewed restaurants and menus locally.
+Users can still view recent information even if the internet connection is lost.
