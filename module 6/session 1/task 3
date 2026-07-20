@@ -1,0 +1,13 @@
+Que:- Pick any one public API from https://public-apis.io/ (for example, a movie or food API) and find an endpoint that returns a list of items. Paste the endpoint URL and describe what kind of data it returns (e.g., movies, recipes, etc.).
+
+
+Ans:-
+
+API: Cat Facts API
+
+Endpoint URL:
+https://catfact.ninja/facts
+
+Description:
+This endpoint returns a list of cat facts in JSON format. 
+Each item contains a fact about cats, making it suitable for applications that display animal trivia or for practicing API integration.
