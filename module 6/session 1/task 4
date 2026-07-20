@@ -1,0 +1,12 @@
+Que 4:- Given the following API response body: { "id": 10, "title": "Flutter Assignment", "completed": false }, explain what each field means and what data type it is (number, string, boolean).<br><br><em><strong>Hint:</strong> Focus on understanding how JSON represents different data types.</em>
+
+Ans :-
+
+  "id": 10,
+  "title": "Flutter Assignment",
+  "completed": false
+
+  id: The value 10 is a number. It uniquely identifies the assignment.
+  title: The value "Flutter Assignment" is a string because it is text enclosed in double quotes. It represents the name of the assignment.
+  completed: The value false is a boolean. A boolean can only have one of two values: true or false. Here, 
+             false indicates that the assignment has not been completed yet.
