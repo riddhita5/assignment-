@@ -1,0 +1,29 @@
+Que:- Imagine you want to build a Flipkart-style product listing app. List two API endpoints you might need (write the expected URL pattern), what HTTP method you would use for each, and what kind of response you expect for each endpoint. <br><br><em><strong>Hint:</strong> Think about listing products and viewing product details.</em>
+
+  
+Ans : - 
+  A Flipkart-style product listing app would require different API endpoints to fetch product information from the server. 
+  Two of the most important endpoints are:
+
+1. Product Listing Endpoint**
+
+Endpoint URL Pattern: `https://api.example.com/products`
+HTTP Method: `GET`
+
+This endpoint is used to retrieve a list of all available products. 
+  The server responds with a collection of product objects, 
+  where each product contains basic information such as the product ID, name, price, image URL, category, and rating. 
+  This data is displayed on the app's home page or category pages, allowing users to browse products.
+
+2. Product Details Endpoint**
+
+Endpoint URL Pattern: `https://api.example.com/products/{id}`
+HTTP Method: `GET`
+
+This endpoint is used to retrieve detailed information about a specific product. The `{id}` in the URL represents the unique ID of the selected product. 
+  The response typically includes complete product information such as the product name, description, price, multiple images, specifications, stock availability, customer ratings, and reviews. 
+  This data is displayed when a user opens a product's detail page.
+
+These two endpoints form the foundation of a Flipkart-style application.
+  The product listing endpoint helps users browse available products, 
+  while the product details endpoint provides complete information about a selected product before making a purchase.
