@@ -1,0 +1,8 @@
+                                                                        
+Que 1.  Open https://jsonplaceholder.typicode.com/posts in your browser and identify the base URL, the specific endpoint, and the HTTP method being used to fetch the data.
+
+Ans:- 
+	Base URL:-       https://jsonplaceholder.typicode.com
+	Endpoint:-       /posts
+	Full URL:-       https://jsonplaceholder.typicode.com/posts
+	HTTP Method:-    GET
