@@ -3,14 +3,14 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-class FatchMovies extends StatefulWidget {
-  const FatchMovies({super.key});
+class FetchMovies extends StatefulWidget {
+  const FetchMovies({super.key});
 
   @override
-  State<FatchMovies> createState() => _FatchMoviesState();
+  State<FetchMovies> createState() => _FetchMoviesState();
 }
 
-class _FatchMoviesState extends State<FatchMovies> {
+class _FetchMoviesState extends State<FetchMovies> {
   @override
   void initState() {
     super.initState();
