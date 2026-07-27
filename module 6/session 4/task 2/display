@@ -1,0 +1,53 @@
+import 'package:flutter/material.dart';
+
+import '../task 1/movies.dart';
+
+class MovieScreen1 extends StatefulWidget {
+  const MovieScreen1({super.key});
+
+  @override
+  State<MovieScreen1> createState() => _MovieScreen1State();
+}
+
+class _MovieScreen1State extends State<MovieScreen1> {
+  late Future<List<Movie>> futureMovies;
+
+  @override
+  void initState() {
+    super.initState();
+    futureMovies = fetchMovies();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Trending Movies"),
+      ),
+      body: FutureBuilder<List<Movie>>(
+        future: futureMovies,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text("Error: ${snapshot.error}"));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(child: Text("No movies found"));
+          }
+
+          final movies = snapshot.data!;
+
+          return ListView.builder(
+            itemCount: movies.length,
+            itemBuilder: (context, index) {
+              return ListTile(
+                leading: const Icon(Icons.movie),
+                title: Text(movies[index].name),
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+}
