@@ -1,0 +1,74 @@
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
+class IplMatchesScreen extends StatefulWidget {
+  const IplMatchesScreen({super.key});
+
+  @override
+  State<IplMatchesScreen> createState() => _IplMatchesScreenState();
+}
+
+class _IplMatchesScreenState extends State<IplMatchesScreen> {
+  String _message = "Press the button to fetch IPL data";
+  bool _isLoading = false;
+
+  Future<void> _fetchIplData(int statusCode) async {
+    setState(() {
+      _isLoading = true;
+      _message = "Fetching...";
+    });
+
+    try {
+      // Using a mock service or a URL that we can control to test status codes
+      // For this task, we will simulate the behavior based on the passed statusCode
+      await Future.delayed(const Duration(seconds: 1));
+
+      if (statusCode == 200) {
+        setState(() => _message = "IPL Match Data: Mumbai Indians vs Chennai Super Kings - 2024");
+      } else if (statusCode == 400) {
+        setState(() => _message = "Invalid request");
+      } else if (statusCode == 401) {
+        setState(() => _message = "Session expired – please log in again");
+      } else if (statusCode == 500) {
+        setState(() => _message = "Server is down – try again later");
+      } else {
+        setState(() => _message = "Unknown error occurred");
+      }
+    } catch (e) {
+      setState(() => _message = "Error: $e");
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Task 1: IPL Match Errors")),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (_isLoading) const CircularProgressIndicator(),
+              Text(_message, textAlign: TextAlign.center, style: const TextStyle(fontSize: 18)),
+              const SizedBox(height: 30),
+              Wrap(
+                spacing: 10,
+                runSpacing: 10,
+                children: [
+                  ElevatedButton(onPressed: () => _fetchIplData(200), child: const Text("Success (200)")),
+                  ElevatedButton(onPressed: () => _fetchIplData(400), child: const Text("Bad Request (400)")),
+                  ElevatedButton(onPressed: () => _fetchIplData(401), child: const Text("Unauthorized (401)")),
+                  ElevatedButton(onPressed: () => _fetchIplData(500), child: const Text("Server Error (500)")),
+                ],
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
