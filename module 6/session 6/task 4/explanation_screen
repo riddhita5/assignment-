@@ -1,0 +1,51 @@
+import 'package:flutter/material.dart';
+
+class ExplanationScreen extends StatelessWidget {
+  const ExplanationScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Task 4: SocketException Decode")),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              "Prompt Used:",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            ),
+            const Card(
+              color: Colors.grey,
+              child: Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  "Explain the Flutter error 'SocketException: Failed host lookup' in simple terms for an Android developer.",
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              "Answer Received:",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            ),
+            const Text(
+              "This error means your app cannot find the server's address on the internet. It's essentially like dialing a phone number that doesn't exist or being unable to reach the phonebook. It usually happens when the device has no internet connection, the URL is typed incorrectly, or the DNS server is having issues. In Flutter development, it's also common if you haven't added the INTERNET permission to your AndroidManifest.xml file.",
+              style: TextStyle(fontSize: 16),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              "My Explanation:",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            ),
+            const Text(
+              "A 'SocketException: Failed host lookup' occurs when the application tries to connect to a web address (like api.example.com) but the system cannot translate that name into an IP address. Think of it as your app trying to send a letter but failing because it can't find the destination on the map. This is most commonly caused by a disconnected Wi-Fi/mobile data, a typo in the API URL, or the server itself being completely unreachable from your network. For Android developers, this is often the first sign that the internet permission is missing in the manifest or the emulator has lost connectivity.",
+              style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
