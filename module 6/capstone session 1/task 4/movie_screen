@@ -1,0 +1,82 @@
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
+class Movie {
+  final String title;
+  final String posterPath;
+  Movie({required this.title, required this.posterPath});
+  factory Movie.fromJson(Map<String, dynamic> json) => Movie(
+    title: json['title'] ?? 'No Title',
+    posterPath: json['poster_path'] ?? '',
+  );
+  String get posterUrl => 'https://image.tmdb.org/t/p/w200$posterPath';
+}
+
+class MovieScreenTask4 extends StatefulWidget {
+  const MovieScreenTask4({super.key});
+
+  @override
+  State<MovieScreenTask4> createState() => _MovieScreenTask4State();
+}
+
+class _MovieScreenTask4State extends State<MovieScreenTask4> {
+  late Future<List<Movie>> _movieFuture;
+
+  Future<List<Movie>> fetchMovies() async {
+    final url = Uri.parse("https://api.themoviedb.org/3/trending/movie/day?api_key=YOUR_API_KEY");
+
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      final List results = data['results'] ?? [];
+      return results.map((m) => Movie.fromJson(m)).toList();
+    } else {
+      throw Exception("Failed to load movies");
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _movieFuture = fetchMovies();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Task 4: Empty Check")),
+      body: FutureBuilder<List<Movie>>(
+        future: _movieFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text("Error: ${snapshot.error}"));
+          } else if (snapshot.hasData) {
+            final movies = snapshot.data!;
+
+            // Task 4: Check if list is empty
+            if (movies.isEmpty) {
+              return const Center(
+                child: Text(
+                  "No movies found",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              );
+            }
+
+            return ListView.builder(
+              itemCount: movies.length,
+              itemBuilder: (context, index) => ListTile(
+                leading: Image.network(movies[index].posterUrl, width: 50, errorBuilder: (c, e, s) => const Icon(Icons.movie)),
+                title: Text(movies[index].title),
+              ),
+            );
+          }
+          return const SizedBox();
+        },
+      ),
+    );
+  }
+}
