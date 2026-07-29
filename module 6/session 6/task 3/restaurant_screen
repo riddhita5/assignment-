@@ -1,0 +1,91 @@
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
+class RestaurantRetryScreen extends StatefulWidget {
+  const RestaurantRetryScreen({super.key});
+
+  @override
+  State<RestaurantRetryScreen> createState() => _RestaurantRetryScreenState();
+}
+
+class _RestaurantRetryScreenState extends State<RestaurantRetryScreen> {
+  List<dynamic> _restaurants = [];
+  bool _isLoading = false;
+  String? _errorMessage;
+  int _retryCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchRestaurants();
+  }
+
+  Future<void> _fetchRestaurants() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      if (_retryCount == 0) {
+        _retryCount++;
+        throw '500';
+      }
+
+      final url = Uri.parse('https://jsonplaceholder.typicode.com/users');
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        setState(() {
+          _restaurants = jsonDecode(response.body);
+        });
+      } else if (response.statusCode == 500) {
+        setState(() => _errorMessage = "Server is down (500)");
+      }
+    } catch (e) {
+      if (e == '500') {
+        setState(() => _errorMessage = "Server is down (500)");
+      } else {
+        setState(() => _errorMessage = "Unexpected error: $e");
+      }
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Task 3: Zomato Retry")),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _errorMessage != null
+          ? Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(_errorMessage!, style: const TextStyle(color: Colors.red, fontSize: 18)),
+            const SizedBox(height: 20),
+            if (_errorMessage!.contains("500"))
+              ElevatedButton.icon(
+                onPressed: _fetchRestaurants,
+                icon: const Icon(Icons.refresh),
+                label: const Text("Retry Request"),
+              ),
+          ],
+        ),
+      )
+          : ListView.builder(
+        itemCount: _restaurants.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            leading: const CircleAvatar(child: Icon(Icons.restaurant)),
+            title: Text(_restaurants[index]['name']),
+            subtitle: Text("Rating: ${(index % 5) + 1}.0 stars"),
+          );
+        },
+      ),
+    );
+  }
+}
