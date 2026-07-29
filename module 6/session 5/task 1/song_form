@@ -1,0 +1,69 @@
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
+
+class SongForm extends StatefulWidget {
+  const SongForm({super.key});
+
+  @override
+  State<SongForm> createState() => _SongFormState();
+}
+
+class _SongFormState extends State<SongForm> {
+  final _formKey = GlobalKey<FormState>();
+  final _songNameController = TextEditingController();
+  final _artistNameController = TextEditingController();
+
+  void _submitForm()
+  {
+    if(_formKey.currentState!.validate())
+    {
+      final payload = {
+        'songName': _songNameController.text,
+        'artistName': _artistNameController.text,
+      };
+      print("JSON Payload: ${jsonEncode(payload)}");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Payload printed to console.'))
+      );
+    }
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+    return  Scaffold(
+      appBar: AppBar(
+        title: Text("Task 1: Song Form"),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              TextFormField(
+                controller: _songNameController,
+                decoration: InputDecoration(
+                  labelText: "Song Name",
+                  border: OutlineInputBorder(),),
+                  validator: (value) => value!.isEmpty ? 'Enter song name' : null,
+                ),
+                SizedBox(height: 16),
+                TextFormField(
+                  controller: _artistNameController,
+                  decoration: InputDecoration(
+                    labelText: "Artist Name",
+                    border: OutlineInputBorder(),),
+                    validator: (value) => value!.isEmpty ? 'Enter artist name' : null,
+                  ),
+                  SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: _submitForm,
+                    child: Text("Submit"),
+                  ),
+        ])))
+
+    );
+  }
+}
