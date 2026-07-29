@@ -1,0 +1,68 @@
+import 'dart:async';
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
+class MovieTimeoutScreen extends StatefulWidget {
+  const MovieTimeoutScreen({super.key});
+
+  @override
+  State<MovieTimeoutScreen> createState() => _MovieTimeoutScreenState();
+}
+
+class _MovieTimeoutScreenState extends State<MovieTimeoutScreen> {
+  bool _isLoading = false;
+
+  Future<void> _fetchMoviesWithTimeout() async {
+    setState(() => _isLoading = true);
+
+    try {
+      // Intentionally using a slow URL or just adding a timeout to a normal one
+      // To simulate timeout, we can set a very short duration or use a non-responsive IP
+      final url = Uri.parse('https://api.tvmaze.com/shows');
+
+      final response = await http.get(url).timeout(const Duration(seconds: 5));
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Fetched ${jsonDecode(response.body).length} movies!")),
+        );
+      }
+    } on TimeoutException {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Network timeout – please check your connection")),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Error: $e")),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Task 2: Movie Timeout")),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (_isLoading) const CircularProgressIndicator(),
+            const Text("BookMyShow Style Movie Fetch"),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _fetchMoviesWithTimeout,
+              child: const Text("Fetch Trending Movies (5s Timeout)"),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
