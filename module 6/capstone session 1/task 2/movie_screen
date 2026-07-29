@@ -1,0 +1,50 @@
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
+class Movie {
+  final String title;
+  final String posterPath;
+  Movie({required this.title, required this.posterPath});
+  factory Movie.fromJson(Map<String, dynamic> json) => Movie(
+    title: json['title'] ?? 'No Title',
+    posterPath: json['poster_path'] ?? '',
+  );
+  String get posterUrl => 'https://image.tmdb.org/t/p/w200$posterPath';
+}
+
+class MovieScreenTask2 extends StatelessWidget {
+  const MovieScreenTask2({super.key});
+
+  Future<List<Movie>> fetchMovies() async {
+    final url = Uri.parse("https://api.themoviedb.org/3/trending/movie/day?api_key=YOUR_API_KEY");
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      final List results = data['results'];
+      return results.map((m) => Movie.fromJson(m)).toList();
+    }
+    return [];
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Task 2: Dynamic Updates")),
+      body: FutureBuilder<List<Movie>>(
+        future: fetchMovies(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) return const SizedBox();
+          final movies = snapshot.data!;
+          return ListView.builder(
+            itemCount: movies.length,
+            itemBuilder: (context, index) => ListTile(
+              leading: Image.network(movies[index].posterUrl, width: 50),
+              title: Text(movies[index].title),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
