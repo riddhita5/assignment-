@@ -1,0 +1,62 @@
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'movie_model.dart';
+import 'database_helper.dart';
+
+class MovieScreenTask1 extends StatefulWidget {
+  const MovieScreenTask1({super.key});
+
+  @override
+  State<MovieScreenTask1> createState() => _MovieScreenTask1State();
+}
+
+class _MovieScreenTask1State extends State<MovieScreenTask1> {
+  final DatabaseHelper _dbHelper = DatabaseHelper();
+  List<Movie> _movies = [];
+  bool _isLoading = false;
+
+  Future<void> _fetchAndSaveMovies() async {
+    setState(() => _isLoading = true);
+    // Replace YOUR_API_KEY with your actual TMDB API key
+    final url = Uri.parse("https://api.themoviedb.org/3/trending/movie/day?api_key=YOUR_API_KEY");
+    
+    try {
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final List results = data['results'];
+        final movies = results.map((m) => Movie.fromJson(m)).toList();
+        
+        await _dbHelper.saveMovies(movies); // Task 1: Save to SQLite
+        setState(() => _movies = movies);
+      }
+    } catch (e) {
+      print("Error: $e");
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchAndSaveMovies();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Task 1: Fetch & Save to DB")),
+      body: _isLoading 
+          ? const Center(child: CircularProgressIndicator())
+          : ListView.builder(
+              itemCount: _movies.length,
+              itemBuilder: (context, index) => ListTile(
+                leading: Image.network(_movies[index].posterUrl, width: 50, errorBuilder: (c,e,s) => const Icon(Icons.movie)),
+                title: Text(_movies[index].title),
+              ),
+            ),
+    );
+  }
+}
