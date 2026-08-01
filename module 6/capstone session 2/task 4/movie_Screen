@@ -1,0 +1,105 @@
+import 'dart:async';
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:connectivity_plus/connectivity_plus.dart';
+import '../task-2/movie_model.dart';
+import '../task-2/database_helper.dart';
+
+class MovieScreenTask4 extends StatefulWidget {
+  const MovieScreenTask4({super.key});
+
+  @override
+  State<MovieScreenTask4> createState() => _MovieScreenTask4State();
+}
+
+class _MovieScreenTask4State extends State<MovieScreenTask4> {
+  final DatabaseHelper _dbHelper = DatabaseHelper();
+  List<Movie> _movies = [];
+  bool _isLoading = false;
+  bool _isOffline = false;
+  late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
+
+  Future<void> _fetchMovies() async {
+    setState(() => _isLoading = true);
+    final url = Uri.parse("https://api.themoviedb.org/3/trending/movie/day?api_key=YOUR_API_KEY");
+    
+    try {
+      final response = await http.get(url).timeout(const Duration(seconds: 5));
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final results = data['results'] as List;
+        final movies = results.map((m) => Movie.fromJson(m)).toList();
+        await _dbHelper.saveMovies(movies);
+        setState(() {
+          _movies = movies;
+          _isOffline = false;
+        });
+        return;
+      }
+    } catch (e) {
+      final cached = await _dbHelper.getCachedMovies();
+      setState(() {
+        _movies = cached;
+        _isOffline = true;
+      });
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchMovies();
+    // Task 4: Monitor connectivity changes
+    _connectivitySubscription = Connectivity().onConnectivityChanged.listen((List<ConnectivityResult> result) {
+      if (result.contains(ConnectivityResult.none)) {
+        setState(() => _isOffline = true);
+        _loadOfflineData();
+      } else {
+        _fetchMovies();
+      }
+    });
+  }
+
+  Future<void> _loadOfflineData() async {
+    final cached = await _dbHelper.getCachedMovies();
+    setState(() => _movies = cached);
+  }
+
+  @override
+  void dispose() {
+    _connectivitySubscription.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Task 4: Auto Switch")),
+      body: Column(
+        children: [
+          if (_isOffline)
+            Container(
+              color: Colors.redAccent,
+              width: double.infinity,
+              padding: const EdgeInsets.all(8),
+              child: const Text("Offline Mode - Showing Cached Data", textAlign: TextAlign.center, style: TextStyle(color: Colors.white)),
+            ),
+          Expanded(
+            child: _isLoading 
+                ? const Center(child: CircularProgressIndicator())
+                : ListView.builder(
+                    itemCount: _movies.length,
+                    itemBuilder: (context, index) => ListTile(
+                      leading: Image.network(_movies[index].posterUrl, width: 50, errorBuilder: (c,e,s) => const Icon(Icons.movie)),
+                      title: Text(_movies[index].title),
+                    ),
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+}
