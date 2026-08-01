@@ -1,0 +1,93 @@
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import '../task-2/movie_model.dart';
+import '../task-2/database_helper.dart';
+
+class MovieScreenTask3 extends StatefulWidget {
+  const MovieScreenTask3({super.key});
+
+  @override
+  State<MovieScreenTask3> createState() => _MovieScreenTask3State();
+}
+
+class _MovieScreenTask3State extends State<MovieScreenTask3> {
+  final DatabaseHelper _dbHelper = DatabaseHelper();
+  List<Movie> _movies = [];
+  bool _isLoading = false;
+  bool _isOffline = false;
+
+  Future<void> _fetchMovies() async {
+    setState(() => _isLoading = true);
+    final url = Uri.parse("https://api.themoviedb.org/3/trending/movie/day?api_key=YOUR_API_KEY");
+    
+    try {
+      final response = await http.get(url).timeout(const Duration(seconds: 5));
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final results = data['results'] as List;
+        final movies = results.map((m) => Movie.fromJson(m)).toList();
+        await _dbHelper.saveMovies(movies);
+        setState(() {
+          _movies = movies;
+          _isOffline = false;
+        });
+        return;
+      }
+    } catch (e) {
+      final cached = await _dbHelper.getCachedMovies();
+      setState(() {
+        _movies = cached;
+        _isOffline = true;
+      });
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchMovies();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Task 3: Refresh Cache"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: _fetchMovies, // Task 3: Manual refresh button
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          if (_isOffline)
+            Container(
+              color: Colors.amber,
+              width: double.infinity,
+              padding: const EdgeInsets.all(8),
+              child: const Text("You are viewing offline data", textAlign: TextAlign.center),
+            ),
+          Expanded(
+            child: _isLoading 
+                ? const Center(child: CircularProgressIndicator())
+                : RefreshIndicator(
+                    onRefresh: _fetchMovies,
+                    child: ListView.builder(
+                      itemCount: _movies.length,
+                      itemBuilder: (context, index) => ListTile(
+                        leading: Image.network(_movies[index].posterUrl, width: 50, errorBuilder: (c,e,s) => const Icon(Icons.movie)),
+                        title: Text(_movies[index].title),
+                      ),
+                    ),
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+}
