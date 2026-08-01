@@ -1,0 +1,33 @@
+class Movie {
+  final int id;
+  final String title;
+  final String posterPath;
+
+  Movie({required this.id, required this.title, required this.posterPath});
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'title': title,
+      'posterPath': posterPath,
+    };
+  }
+
+  factory Movie.fromMap(Map<String, dynamic> map) {
+    return Movie(
+      id: map['id'],
+      title: map['title'],
+      posterPath: map['posterPath'],
+    );
+  }
+
+  factory Movie.fromJson(Map<String, dynamic> json) {
+    return Movie(
+      id: json['id'],
+      title: json['title'] ?? json['name'] ?? 'Unknown',
+      posterPath: json['poster_path'] ?? '',
+    );
+  }
+
+  String get posterUrl => 'https://image.tmdb.org/t/p/w200$posterPath';
+}
