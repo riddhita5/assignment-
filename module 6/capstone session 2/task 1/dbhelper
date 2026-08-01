@@ -1,0 +1,47 @@
+import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart';
+import 'movie_model.dart';
+
+class DatabaseHelper {
+  static final DatabaseHelper _instance = DatabaseHelper._internal();
+  static Database? _database;
+
+  factory DatabaseHelper() => _instance;
+
+  DatabaseHelper._internal();
+
+  Future<Database> get database async {
+    if (_database != null) return _database!;
+    _database = await _initDatabase();
+    return _database!;
+  }
+
+  Future<Database> _initDatabase() async {
+    String path = join(await getDatabasesPath(), 'movies_task1.db');
+    return await openDatabase(
+      path,
+      version: 1,
+      onCreate: (db, version) {
+        return db.execute(
+          'CREATE TABLE movies(id INTEGER PRIMARY KEY, title TEXT, posterPath TEXT)',
+        );
+      },
+    );
+  }
+
+  Future<void> saveMovies(List<Movie> movies) async {
+    final db = await database;
+    Batch batch = db.batch();
+    batch.delete('movies');
+    for (var movie in movies) {
+      batch.insert('movies', movie.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
+    }
+    await batch.commit();
+  }
+
+  Future<List<Movie>> getCachedMovies() async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query('movies');
+    return List.generate(maps.length, (i) => Movie.fromMap(maps[i]));
+  }
+}
