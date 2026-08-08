@@ -1,0 +1,11 @@
+4.  Pick any one app you use daily (Instagram, Paytm, or Myntra). Explain in 4-5 lines how Cloud Storage could be used in that app to manage user-uploaded images, profile photos, or receipts.
+
+Ans:- 
+
+### Cloud Storage – Instagram
+
+Instagram can use Firebase Cloud Storage to store user-uploaded photos and videos securely.
+Users can upload profile pictures, posts, and story images to Cloud Storage.
+Each uploaded file can be stored with a unique file name or user ID.
+The app can retrieve the image URL from Storage and display it in the user's profile or feed.
+Cloud Storage also makes it easy to manage and serve large numbers of user-uploaded files.
