@@ -1,0 +1,47 @@
+
+3. Imagine you are building a BookMyShow-style app. Describe how you would use Firestore to store and retrieve movie showtimes for different cities. 
+Write a sample Firestore document structure for one city with at least two movies and their timings.
+
+
+Ans:-  
+
+# Firestore – Movie Showtimes
+
+For a BookMyShow-style app, I would use **Cloud Firestore** to store movie showtimes city-wise.
+
+* Create a `cities` collection in Firestore.
+* Each city can have a document such as `ahmedabad`.
+* Store movies and their show timings inside the city document.
+* When a user selects a city, the app can retrieve that city's document and display the available movies and timings.
+* Firestore allows the app to quickly read and update showtimes when new shows are added.
+
+### Sample Firestore Structure
+
+```text
+cities
+ └── ahmedabad
+      └── movies
+           ├── avatar_3
+           │    ├── movieName: "Avatar 3"
+           │    └── timings:
+           │         ├── "10:00 AM"
+           │         ├── "2:00 PM"
+           │         └── "7:30 PM"
+           │
+           └── spiderman
+                ├── movieName: "Spider-Man"
+                └── timings:
+                     ├── "11:00 AM"
+                     ├── "4:00 PM"
+                     └── "9:00 PM"
+```
+
+### Example
+
+If the user selects **Ahmedabad**, the app retrieves the `ahmedabad` city data from Firestore and displays:
+
+* Avatar 3 → 10:00 AM, 2:00 PM, 7:30 PM
+* Spider-Man → 11:00 AM, 4:00 PM, 9:00 PM
+
+
+
