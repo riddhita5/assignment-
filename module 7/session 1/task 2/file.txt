@@ -1,0 +1,12 @@
+2.
+List 3 ways apps like Zomato, Flipkart, or Spotify could use Firebase Authentication to improve the user login or signup experience.
+Write your answer as short bullet points in a text file.
+
+Ans:- 
+
+
+# Firebase Authentication – Uses in Apps
+
+* **Zomato:** Users can sign up/login using email, phone number, or Google account for quick and easy access.
+* **Flipkart:** Firebase Authentication can provide secure login and OTP-based phone verification for users.
+* **Spotify:** Users can use social login such as Google or Apple to sign in quickly without creating a separate password.
