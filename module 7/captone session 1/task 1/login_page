@@ -1,0 +1,147 @@
+import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import '../task2/signup_page.dart';
+import 'auth_service.dart';
+
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final AuthService _authService = AuthService();
+  User? _user;
+  bool _isLoading = false;
+  late StreamSubscription<User?> _authSubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    // Manually listening to auth state changes using StatefulWidget lifecycle
+    _authSubscription = _authService.authStateChanges.listen((User? user) {
+      if (mounted) {
+        setState(() {
+          _user = user;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _authSubscription.cancel();
+    super.dispose();
+  }
+
+  Future<void> _handleSignIn() async {
+    setState(() => _isLoading = true);
+    try {
+      final user = await _authService.signInWithGoogle();
+      if (user == null && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Sign-in cancelled")),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Sign-in failed: $e")),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  Future<void> _handleSignOut() async {
+    await _authService.signOut();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Google Sign-In"),
+        centerTitle: true,
+      ),
+      body: Center(
+        child: _user != null ? _buildUserInfo() : _buildSignInUI(),
+      ),
+    );
+  }
+
+  Widget _buildUserInfo() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        CircleAvatar(
+          radius: 40,
+          backgroundImage: (_user?.photoURL != null && _user!.photoURL!.isNotEmpty)
+              ? NetworkImage(_user!.photoURL!)
+              : null,
+          child: (_user?.photoURL == null || _user!.photoURL!.isEmpty)
+              ? const Icon(Icons.person, size: 40)
+              : null,
+        ),
+        const SizedBox(height: 20),
+        Text(
+          "Welcome, ${_user?.displayName ?? 'User'}",
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        Text(_user?.email ?? ""),
+        const SizedBox(height: 30),
+        ElevatedButton(
+          onPressed: _handleSignOut,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.red.shade50,
+            foregroundColor: Colors.red,
+          ),
+          child: const Text("Sign Out"),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSignInUI() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text(
+          "Sign in to continue",
+          style: TextStyle(fontSize: 18),
+        ),
+        const SizedBox(height: 20),
+        _isLoading
+            ? const CircularProgressIndicator()
+            : Column(
+                children: [
+                  ElevatedButton.icon(
+                    icon: Image.network(
+                      'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/24px-Google_%22G%22_logo.svg.png',
+                      height: 24,
+                      errorBuilder: (context, error, stackTrace) => const Icon(Icons.login),
+                    ),
+                    label: const Text("Sign in with Google"),
+                    onPressed: _handleSignIn,
+                  ),
+                  const SizedBox(height: 10),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const SignupPage()),
+                      );
+                    },
+                    child: const Text("Don't have an account? Sign Up"),
+                  ),
+                ],
+              ),
+      ],
+    );
+  }
+}
