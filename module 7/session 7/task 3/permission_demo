@@ -1,0 +1,110 @@
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
+
+class PermissionDemo extends StatefulWidget {
+  const PermissionDemo({super.key});
+
+  @override
+  State<PermissionDemo> createState() => _PermissionDemoState();
+}
+
+class _PermissionDemoState extends State<PermissionDemo> {
+  File? _image;
+  final ImagePicker _picker = ImagePicker();
+
+  Future<bool> _handlePermission(Permission permission, String message) async {
+    final status = await permission.request();
+
+    if (status.isGranted) {
+      return true;
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(message),
+            backgroundColor: Colors.redAccent,
+            action: SnackBarAction(
+              label: 'Settings',
+              textColor: Colors.white,
+              onPressed: () => openAppSettings(),
+            ),
+          ),
+        );
+      }
+      return false;
+    }
+  }
+
+  Future<void> _pickFromGallery() async {
+    Permission storagePermission = Platform.isAndroid && 
+            (await Permission.photos.status != PermissionStatus.provisional) 
+        ? Permission.photos 
+        : Permission.storage;
+
+    if (await _handlePermission(storagePermission, 'ગેલેરી એક્સેસ કરવા માટે પરમિશન જરૂરી છે.')) {
+      final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+      if (pickedFile != null) {
+        setState(() => _image = File(pickedFile.path));
+      }
+    }
+  }
+
+  Future<void> _takeSelfie() async {
+    if (await _handlePermission(Permission.camera, 'સેલ્ફી લેવા માટે કેમેરાની પરમિશન આપવી પડશે.')) {
+      final XFile? pickedFile = await _picker.pickImage(
+        source: ImageSource.camera,
+        preferredCameraDevice: CameraDevice.front,
+      );
+      if (pickedFile != null) {
+        setState(() => _image = File(pickedFile.path));
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Runtime Permissions (Task 3)'),
+        backgroundColor: Colors.indigo,
+        foregroundColor: Colors.white,
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircleAvatar(
+              radius: 80,
+              backgroundColor: Colors.grey[200],
+              backgroundImage: _image != null ? FileImage(_image!) : null,
+              child: _image == null
+                  ? const Icon(Icons.person, size: 80, color: Colors.grey)
+                  : null,
+            ),
+            const SizedBox(height: 30),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton.icon(
+                  onPressed: _takeSelfie,
+                  icon: const Icon(Icons.camera_alt),
+                  label: const Text('Camera'),
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.indigo, foregroundColor: Colors.white),
+                ),
+                const SizedBox(width: 15),
+                ElevatedButton.icon(
+                  onPressed: _pickFromGallery,
+                  icon: const Icon(Icons.photo_library),
+                  label: const Text('Gallery'),
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.orange, foregroundColor: Colors.white),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
