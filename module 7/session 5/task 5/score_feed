@@ -1,0 +1,77 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+
+class ScoreFeedScreen extends StatelessWidget {
+  const ScoreFeedScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('IPL Live Score Feed (Task 5)'),
+        backgroundColor: Colors.indigo,
+        foregroundColor: Colors.white,
+      ),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance.collection('ipl_scores').snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) return const Center(child: Text('Error loading scores'));
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          final matches = snapshot.data!.docs;
+
+          if (matches.isEmpty) {
+            return const Center(child: Text('No matches live right now.'));
+          }
+
+          return ListView.builder(
+            itemCount: matches.length,
+            itemBuilder: (context, index) {
+              final match = matches[index].data() as Map<String, dynamic>;
+              
+              return Card(
+                elevation: 4,
+                margin: const EdgeInsets.all(12),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      Text(
+                        match['status'] ?? 'LIVE',
+                        style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          _buildTeamColumn(match['teamA'] ?? 'Team A', match['scoreA'] ?? '0/0'),
+                          const Text('VS', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                          _buildTeamColumn(match['teamB'] ?? 'Team B', match['scoreB'] ?? '0/0'),
+                        ],
+                      ),
+                      const Divider(height: 30),
+                      Text(match['venue'] ?? 'Stadium Name', style: const TextStyle(fontStyle: FontStyle.italic)),
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildTeamColumn(String name, String score) {
+    return Column(
+      children: [
+        Text(name, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
+        const SizedBox(height: 5),
+        Text(score, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.indigo)),
+      ],
+    );
+  }
+}
