@@ -1,0 +1,101 @@
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
+
+class PermissionHandlerScreen extends StatefulWidget {
+  const PermissionHandlerScreen({super.key});
+
+  @override
+  State<PermissionHandlerScreen> createState() => _PermissionHandlerScreenState();
+}
+
+class _PermissionHandlerScreenState extends State<PermissionHandlerScreen> {
+  String _statusMessage = "Select an action to check permissions";
+  Color _statusColor = Colors.black;
+
+  Future<void> _requestStoragePermission() async {
+    PermissionStatus status;
+    
+    // Check Android version to request appropriate permission
+    if (Platform.isAndroid) {
+      // For Android 13 (API 33) and above
+      status = await Permission.photos.request();
+    } else {
+      status = await Permission.storage.request();
+    }
+
+    setState(() {
+      if (status.isGranted) {
+        _statusMessage = "Permission Granted! You can now access storage.";
+        _statusColor = Colors.green;
+      } else if (status.isDenied) {
+        _statusMessage = "Permission Denied. Please allow access to continue.";
+        _statusColor = Colors.orange;
+        _showErrorSnackBar("Permission Denied");
+      } else if (status.isPermanentlyDenied) {
+        _statusMessage = "Permission Permanently Denied. Enable it in App Settings.";
+        _statusColor = Colors.red;
+        _showErrorSnackBar("Permission Permanently Denied");
+        openAppSettings(); // Open settings so user can manually enable
+      }
+    });
+  }
+
+  void _showErrorSnackBar(String error) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("Error: $error"),
+        backgroundColor: Colors.red,
+        action: SnackBarAction(
+          label: "Settings",
+          textColor: Colors.white,
+          onPressed: () => openAppSettings(),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Task 3: Permission Handler")),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.security, size: 80, color: Colors.blue),
+              const SizedBox(height: 30),
+              const Text(
+                "Device Storage Permission",
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                _statusMessage,
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16, color: _statusColor),
+              ),
+              const SizedBox(height: 40),
+              ElevatedButton.icon(
+                onPressed: _requestStoragePermission,
+                icon: const Icon(Icons.folder_shared),
+                label: const Text("Request Storage Permission"),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                ),
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                "Note: This task demonstrates handling permissions and showing clear error messages as requested.",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontStyle: FontStyle.italic, color: Colors.grey),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
