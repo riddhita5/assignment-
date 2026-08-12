@@ -1,0 +1,114 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import '../task4/profile_page.dart';
+import '../task5/edit_profile_page.dart';
+import '../../Capstone_session2/task1/edit_profile.dart';
+import '../../Capstone_session2/task2/favorite_songs.dart';
+import '../../Capstone_session2/task3/permission_handler_screen.dart';
+import '../../Capstone_session2/task4/chat_screen.dart';
+import '../../Capstone_session2/task5/video_upload.dart';
+
+class WelcomePage extends StatelessWidget {
+  const WelcomePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Welcome"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () async {
+              await FirebaseAuth.instance.signOut();
+            },
+          )
+        ],
+      ),
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const SizedBox(height: 20),
+              const Text("Successfully Logged In!", style: TextStyle(fontSize: 20)),
+              const SizedBox(height: 10),
+              Text("Email: ${user?.email ?? 'N/A'}", style: const TextStyle(fontWeight: FontWeight.bold)),
+              
+              const Divider(height: 40),
+              const Text("Capstone Session 1", style: TextStyle(fontWeight: FontWeight.bold)),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const ProfilePage()),
+                  );
+                },
+                child: const Text("User Profile (Task 4)"),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const EditProfilePage()),
+                  );
+                },
+                child: const Text("Edit Name (Task 5)"),
+              ),
+
+              const Divider(height: 40),
+              const Text("Capstone Session 2", style: TextStyle(fontWeight: FontWeight.bold)),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const EditProfile()),
+                  );
+                },
+                child: const Text("Task 1: Image Picker & Profile"),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const FavoriteSongsScreen()),
+                  );
+                },
+                child: const Text("Task 2: Favorite Songs (Real-time)"),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const PermissionHandlerScreen()),
+                  );
+                },
+                child: const Text("Task 3: Permission Handler"),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const ChatScreen()),
+                  );
+                },
+                child: const Text("Task 4: Real-time Chat"),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const VideoUploadScreen()),
+                  );
+                },
+                child: const Text("Task 5: Video Upload (Storage)"),
+              ),
+              const SizedBox(height: 20),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
