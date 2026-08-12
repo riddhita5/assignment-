@@ -1,0 +1,105 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+
+class FavoriteSongsScreen extends StatefulWidget {
+  const FavoriteSongsScreen({super.key});
+
+  @override
+  State<FavoriteSongsScreen> createState() => _FavoriteSongsScreenState();
+}
+
+class _FavoriteSongsScreenState extends State<FavoriteSongsScreen> {
+  final _songController = TextEditingController();
+  final _firestore = FirebaseFirestore.instance;
+  final _auth = FirebaseAuth.instance;
+
+  Future<void> _addSong() async {
+    final songName = _songController.text.trim();
+    if (songName.isNotEmpty && _auth.currentUser != null) {
+      await _firestore
+          .collection('users')
+          .doc(_auth.currentUser!.uid)
+          .collection('favorite_songs')
+          .add({
+        'name': songName,
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+      _songController.clear();
+    }
+  }
+
+  Future<void> _removeSong(String id) async {
+    await _firestore
+        .collection('users')
+        .doc(_auth.currentUser!.uid)
+        .collection('favorite_songs')
+        .doc(id)
+        .delete();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_auth.currentUser == null) {
+      return const Scaffold(body: Center(child: Text("Please login first")));
+    }
+
+    return Scaffold(
+      appBar: AppBar(title: const Text("Favorite Songs")),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _songController,
+                    decoration: const InputDecoration(hintText: "Enter song name"),
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.add),
+                  onPressed: _addSong,
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: _firestore
+                  .collection('users')
+                  .doc(_auth.currentUser!.uid)
+                  .collection('favorite_songs')
+                  .orderBy('timestamp', descending: true)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) return const Center(child: Text("Error loading songs"));
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                final docs = snapshot.data!.docs;
+                if (docs.isEmpty) return const Center(child: Text("No favorite songs yet"));
+
+                return ListView.builder(
+                  itemCount: docs.length,
+                  itemBuilder: (context, index) {
+                    final data = docs[index].data() as Map<String, dynamic>;
+                    return ListTile(
+                      title: Text(data['name'] ?? 'Unknown Song'),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.delete, color: Colors.red),
+                        onPressed: () => _removeSong(docs[index].id),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
