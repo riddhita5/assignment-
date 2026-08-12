@@ -1,0 +1,140 @@
+import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+
+class DeleteFileScreen extends StatefulWidget {
+  const DeleteFileScreen({super.key});
+
+  @override
+  State<DeleteFileScreen> createState() => _DeleteFileScreenState();
+}
+
+class _DeleteFileScreenState extends State<DeleteFileScreen> {
+  File? _image;
+  String? _uploadUrl;
+  bool _isProcessing = false;
+  String? _status;
+  final ImagePicker _picker = ImagePicker();
+
+  // ઈમેજ અપલોડ કરવાનું ફંક્શન
+  Future<void> _uploadFile() async {
+    final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile == null) return;
+
+    setState(() {
+      _isProcessing = true;
+      _status = 'Uploading...';
+      _image = File(pickedFile.path);
+    });
+
+    try {
+      String fileName = 'delete_test_${DateTime.now().millisecondsSinceEpoch}.jpg';
+      Reference ref = FirebaseStorage.instance.ref().child('temp_files').child(fileName);
+      
+      UploadTask uploadTask = ref.putFile(_image!);
+      TaskSnapshot snapshot = await uploadTask;
+      String url = await snapshot.ref.getDownloadURL();
+
+      setState(() {
+        _uploadUrl = url;
+        _status = 'File Uploaded Successfully!';
+      });
+    } catch (e) {
+      setState(() => _status = 'Upload Error: $e');
+    } finally {
+      setState(() => _isProcessing = false);
+    }
+  }
+
+  // ઈમેજ ડિલીટ કરવાનું ફંક્શન (Task 5 core logic)
+  Future<void> _deleteFile() async {
+    if (_uploadUrl == null) return;
+
+    setState(() {
+      _isProcessing = true;
+      _status = 'Deleting file...';
+    });
+
+    try {
+      // URL પરથી Reference મેળવીને ડિલીટ કરવું
+      Reference storageRef = FirebaseStorage.instance.refFromURL(_uploadUrl!);
+      await storageRef.delete();
+
+      setState(() {
+        _uploadUrl = null;
+        _image = null;
+        _status = 'File Deleted Successfully!';
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('ફાઈલ સફળતાપૂર્વક ડિલીટ થઈ ગઈ છે.')),
+      );
+      
+      // Verification logic: ફરીથી URL ચેક કરવું હોય તો કરી શકાય
+    } catch (e) {
+      setState(() => _status = 'Delete Error: $e');
+      print('Error deleting file: $e');
+    } finally {
+      setState(() => _isProcessing = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Delete File & Verify (Task 5)'),
+        backgroundColor: Colors.redAccent,
+        foregroundColor: Colors.white,
+      ),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (_image != null)
+                Image.file(_image!, height: 150)
+              else
+                const Icon(Icons.image_not_supported, size: 100, color: Colors.grey),
+              
+              const SizedBox(height: 20),
+              
+              if (_status != null)
+                Text(_status!, style: const TextStyle(fontWeight: FontWeight.bold)),
+              
+              const SizedBox(height: 30),
+              
+              if (_uploadUrl == null)
+                ElevatedButton.icon(
+                  onPressed: _isProcessing ? null : _uploadFile,
+                  icon: const Icon(Icons.cloud_upload),
+                  label: const Text('Upload a File to Test Delete'),
+                )
+              else
+                Column(
+                  children: [
+                    const Text('URL available. You can now delete this file.', style: TextStyle(fontSize: 12)),
+                    const SizedBox(height: 10),
+                    ElevatedButton.icon(
+                      onPressed: _isProcessing ? null : _deleteFile,
+                      icon: const Icon(Icons.delete_forever),
+                      label: const Text('Delete Uploaded File'),
+                      style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
+                    ),
+                  ],
+                ),
+              
+              if (_isProcessing)
+                const Padding(
+                  padding: EdgeInsets.only(top: 20),
+                  child: CircularProgressIndicator(),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
