@@ -1,0 +1,61 @@
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
+
+class ImageUtils {
+  static final ImagePicker _picker = ImagePicker();
+
+  static Future<bool> _handlePermission(Permission permission, BuildContext context, String message) async {
+    final status = await permission.request();
+    if (status.isGranted) {
+      return true;
+    } else {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(message),
+            backgroundColor: Colors.redAccent,
+            action: SnackBarAction(
+              label: 'Settings',
+              textColor: Colors.white,
+              onPressed: () => openAppSettings(),
+            ),
+          ),
+        );
+      }
+      return false;
+    }
+  }
+
+  static Future<File?> pickImageFromCamera(BuildContext context) async {
+    if (await _handlePermission(Permission.camera, context, 'કેમેરા એક્સેસ કરવા માટે પરમિશન જરૂરી છે.')) {
+      final XFile? pickedFile = await _picker.pickImage(
+        source: ImageSource.camera,
+        preferredCameraDevice: CameraDevice.front,
+      );
+      if (pickedFile != null) {
+        return File(pickedFile.path);
+      }
+    }
+    return null;
+  }
+
+  static Future<File?> pickImageFromGallery(BuildContext context) async {
+    Permission storagePermission = Platform.isAndroid ? Permission.photos : Permission.storage;
+    
+    if (Platform.isAndroid) {
+      final status = await Permission.photos.status;
+      if (status == PermissionStatus.denied || status == PermissionStatus.permanentlyDenied) {
+      }
+    }
+
+    if (await _handlePermission(storagePermission, context, 'ગેલેરી એક્સેસ કરવા માટે પરમિશન જરૂરી છે.')) {
+      final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+      if (pickedFile != null) {
+        return File(pickedFile.path);
+      }
+    }
+    return null;
+  }
+}
