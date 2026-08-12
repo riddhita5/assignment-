@@ -1,0 +1,143 @@
+import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+
+class ProfileUploadV2Screen extends StatefulWidget {
+  const ProfileUploadV2Screen({super.key});
+
+  @override
+  State<ProfileUploadV2Screen> createState() => _ProfileUploadV2ScreenState();
+}
+
+class _ProfileUploadV2ScreenState extends State<ProfileUploadV2Screen> {
+  File? _image;
+  String? _uploadStatus;
+  final ImagePicker _picker = ImagePicker();
+
+  Future<void> uploadProfilePicture() async {
+    try {
+      final XFile? pickedFile = await _picker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 100, // Original quality for size check
+      );
+
+      if (pickedFile == null) return;
+
+      // 2MB Limit Check
+      final int fileSize = await pickedFile.length();
+      const int maxFileSize = 2 * 1024 * 1024; // 2MB in bytes
+
+      if (fileSize > maxFileSize) {
+        setState(() {
+          _uploadStatus = 'Error: File too large (> 2MB)';
+          _image = null;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('પસંદ કરેલી ફાઈલ ${(fileSize / (1024 * 1024)).toStringAsFixed(2)} MB છે. મહેરબાની કરીને 2MB થી નાની ફાઈલ પસંદ કરો.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
+      setState(() {
+        _image = File(pickedFile.path);
+        _uploadStatus = 'Uploading...';
+      });
+
+      // Firebase Storage માં પાથ સેટ કરવો
+      String fileName = 'profile_v2_${DateTime.now().millisecondsSinceEpoch}.jpg';
+      Reference storageRef = FirebaseStorage.instance
+          .ref()
+          .child('profile_pics')
+          .child(fileName);
+
+      // ફાઈલ અપલોડ કરવી
+      UploadTask uploadTask = storageRef.putFile(_image!);
+      
+      // અપલોડ પૂર્ણ થાય તેની રાહ જોવી
+      TaskSnapshot snapshot = await uploadTask;
+      
+      // ડાઉનલોડ URL મેળવવી
+      String downloadUrl = await snapshot.ref.getDownloadURL();
+
+      setState(() {
+        _uploadStatus = 'Upload Success!';
+        print('Download URL: $downloadUrl');
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Profile picture uploaded successfully!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+
+    } catch (e) {
+      setState(() {
+        _uploadStatus = 'Upload Failed';
+      });
+      print('Error: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Upload with Size Check (Task 3)'),
+        backgroundColor: Colors.teal,
+        foregroundColor: Colors.white,
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircleAvatar(
+              radius: 60,
+              backgroundColor: Colors.grey[300],
+              backgroundImage: _image != null ? FileImage(_image!) : null,
+              child: _image == null
+                  ? const Icon(Icons.person, size: 60, color: Colors.white)
+                  : null,
+            ),
+            const SizedBox(height: 20),
+            
+            if (_uploadStatus != null)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Text(
+                  _uploadStatus!,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: _uploadStatus!.contains('Error') || _uploadStatus == 'Upload Failed' 
+                        ? Colors.red 
+                        : (_uploadStatus == 'Upload Success!' ? Colors.green : Colors.orange),
+                  ),
+                ),
+              ),
+            
+            const SizedBox(height: 30),
+            
+            ElevatedButton.icon(
+              onPressed: uploadProfilePicture,
+              icon: const Icon(Icons.add_photo_alternate),
+              label: const Text('Select & Check Size (< 2MB)'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.teal,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
