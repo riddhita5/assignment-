@@ -1,0 +1,11 @@
+. What issues can you notice?
+
+Even though Provider solves the shared-state problem, as the application becomes larger, you can notice some difficulties:-
+
+-> Many widgets may depend on the same CartProvider.
+-> It can become difficult to know which widget is changing the state.
+-> If many Consumers are used, debugging rebuilds can become tricky.
+-> Business logic can become large inside one ChangeNotifier.
+-> Different screens may trigger the same methods from different places.
+-> If the provider contains too much logic, the class can become difficult to maintain.
+-> Incorrect use of notifyListeners() can cause unnecessary UI rebuilds.
