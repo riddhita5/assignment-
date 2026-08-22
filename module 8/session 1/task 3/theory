@@ -1,0 +1,16 @@
+Two potential problems with setState() in multiple widgets:-
+
+1. Data gets out of sync
+If different widgets use their own setState() to manage the playlist, each widget may have its own copy of the playlist. When one widget adds or removes a song, another widget may still show the old playlist.
+
+Example:
+
+Playlist Screen → 5 songs
+Player Widget   → 4 songs
+
+This can cause inconsistent UI and incorrect data.
+
+2. Code becomes difficult to maintain
+As the app grows, many widgets may contain their own setState() logic for adding, removing, sorting, or playing songs. The same playlist logic can become duplicated in several places.
+
+This makes the code harder to debug and update. If you change the playlist logic, you may need to modify multiple widgets, increasing the chance of bugs.
