@@ -1,0 +1,39 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+class CounterState {
+  final int counter;
+  final String message;
+
+  CounterState({
+    required this.counter,
+    required this.message,
+  });
+}
+
+class CounterCubit extends Cubit<CounterState> {
+  CounterCubit()
+      : super(
+    CounterState(
+      counter: 0,
+      message: "Initial",
+    ),
+  );
+
+  void increment() {
+    emit(
+      CounterState(
+        counter: state.counter + 1,
+        message: "Increased!",
+      ),
+    );
+  }
+
+  void decrement() {
+    emit(
+      CounterState(
+        counter: state.counter - 1,
+        message: "Decreased!",
+      ),
+    );
+  }
+}
