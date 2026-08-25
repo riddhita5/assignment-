@@ -1,0 +1,103 @@
+import 'package:flutter/material.dart';
+
+import '../data/services/restaurant_service_api.dart';
+
+class RestaurantScreen extends StatefulWidget {
+  const RestaurantScreen({super.key});
+
+  @override
+  State<RestaurantScreen> createState() =>
+      _RestaurantScreenState();
+}
+
+class _RestaurantScreenState
+    extends State<RestaurantScreen> {
+
+  final RestaurantApiService apiService =
+  RestaurantApiService();
+
+  List<dynamic> restaurants = [];
+
+  bool isLoading = true;
+
+  String? errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+
+    fetchRestaurants();
+  }
+
+  Future<void> fetchRestaurants() async {
+    try {
+      final data =
+      await apiService.fetchRestaurants();
+
+      setState(() {
+        restaurants = data;
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        errorMessage = e.toString();
+        isLoading = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Zomato Restaurants',
+        ),
+      ),
+
+      body: isLoading
+          ? const Center(
+        child: CircularProgressIndicator(),
+      )
+
+          : errorMessage != null
+          ? Center(
+        child: Text(
+          errorMessage!,
+          style: const TextStyle(
+            color: Colors.red,
+          ),
+        ),
+      )
+
+          : ListView.builder(
+        itemCount: restaurants.length,
+        itemBuilder: (context, index) {
+          final restaurant =
+          restaurants[index];
+
+          return Card(
+            margin: const EdgeInsets.all(10),
+            child: ListTile(
+              leading: const Icon(
+                Icons.restaurant,
+                size: 40,
+              ),
+
+              title: Text(
+                restaurant['name'],
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+
+              subtitle: Text(
+                restaurant['email'],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
