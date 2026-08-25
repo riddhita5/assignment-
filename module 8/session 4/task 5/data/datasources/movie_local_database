@@ -1,0 +1,13 @@
+import '../../domain/entities/movie.dart';
+
+class MovieLocalDatabase {
+  final List<Movie> movies = [];
+
+  Future<List<Movie>> getMovies() async {
+    return movies;
+  }
+
+  Future<void> saveMovie(Movie movie) async {
+    movies.add(movie);
+  }
+}
