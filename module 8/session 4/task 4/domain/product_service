@@ -1,0 +1,45 @@
+class Product {
+  final String name;
+  final double price;
+  final String category;
+
+  Product({
+    required this.name,
+    required this.price,
+    required this.category,
+  });
+}
+
+class ProductService {
+
+  List<Product> filterByCategory(
+      List<Product> products,
+      String category,
+      ) {
+    return products
+        .where(
+          (product) =>
+      product.category == category,
+    )
+        .toList();
+  }
+
+  List<Product> sortByPrice(
+      List<Product> products,
+      bool ascending,
+      ) {
+    final result = List<Product>.from(products);
+
+    result.sort(
+          (a, b) {
+        if (ascending) {
+          return a.price.compareTo(b.price);
+        } else {
+          return b.price.compareTo(a.price);
+        }
+      },
+    );
+
+    return result;
+  }
+}
