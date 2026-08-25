@@ -1,0 +1,35 @@
+import '../../domain/entities/movie.dart';
+import '../data/datasources/movie_api_service.dart';
+import '../data/datasources/movie_local_database.dart';
+import '../domain/repository/movie_repositories.dart';
+
+class MovieRepositoryImpl implements MovieRepository {
+  final MovieApiService apiService;
+  final MovieLocalDatabase localDatabase;
+
+  MovieRepositoryImpl({
+    required this.apiService,
+    required this.localDatabase,
+  });
+
+  @override
+  Future<List<Movie>> getMovies() async {
+    try {
+      final movies =
+      await apiService.fetchMoviesFromApi();
+
+      for (final movie in movies) {
+        await localDatabase.saveMovie(movie);
+      }
+
+      return movies;
+    } catch (e) {
+      return await localDatabase.getMovies();
+    }
+  }
+
+  @override
+  Future<void> saveMovie(Movie movie) async {
+    await localDatabase.saveMovie(movie);
+  }
+}
