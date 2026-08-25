@@ -1,0 +1,24 @@
+import '../../domain/entities/movie.dart';
+
+class MovieApiService {
+  Future<List<Movie>> fetchMoviesFromApi() async {
+    await Future.delayed(
+      const Duration(seconds: 2),
+    );
+
+    return [
+      Movie(
+        id: 1,
+        title: 'Avengers: Endgame',
+      ),
+      Movie(
+        id: 2,
+        title: 'Spider-Man',
+      ),
+      Movie(
+        id: 3,
+        title: 'Inception',
+      ),
+    ];
+  }
+}
