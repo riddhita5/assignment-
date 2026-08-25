@@ -1,0 +1,7 @@
+import '../enities/song.dart';
+
+abstract class SongRepository {
+  Future<List<Song>> fetchSongs();
+
+  Future<void> addSong(Song song);
+}
