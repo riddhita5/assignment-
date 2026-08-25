@@ -1,0 +1,185 @@
+import 'package:flutter/material.dart';
+import '../domain/product_service.dart';
+
+class ProductScreen extends StatefulWidget {
+  const ProductScreen({super.key});
+
+  @override
+  State<ProductScreen> createState() =>
+      _ProductScreenState();
+}
+
+class _ProductScreenState
+    extends State<ProductScreen> {
+
+  final ProductService productService =
+  ProductService();
+
+  final List<Product> allProducts = [
+    Product(
+      name: 'iPhone 15',
+      price: 69999,
+      category: 'Electronics',
+    ),
+    Product(
+      name: 'Samsung Galaxy',
+      price: 59999,
+      category: 'Electronics',
+    ),
+    Product(
+      name: 'Nike Shoes',
+      price: 4999,
+      category: 'Shoes',
+    ),
+    Product(
+      name: 'Adidas Shoes',
+      price: 3999,
+      category: 'Shoes',
+    ),
+  ];
+
+  late List<Product> displayedProducts;
+
+  @override
+  void initState() {
+    super.initState();
+
+    displayedProducts = allProducts;
+  }
+
+  void filterProducts(String category) {
+    setState(() {
+      displayedProducts =
+          productService.filterByCategory(
+            allProducts,
+            category,
+          );
+    });
+  }
+
+  void sortProducts(bool ascending) {
+    setState(() {
+      displayedProducts =
+          productService.sortByPrice(
+            displayedProducts,
+            ascending,
+          );
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Flipkart Products',
+        ),
+      ),
+
+      body: Column(
+        children: [
+
+
+          Row(
+            mainAxisAlignment:
+            MainAxisAlignment.spaceEvenly,
+            children: [
+
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    displayedProducts =
+                        allProducts;
+                  });
+                },
+                child: const Text('All'),
+              ),
+
+              ElevatedButton(
+                onPressed: () {
+                  filterProducts('Electronics');
+                },
+                child: const Text('Electronics'),
+              ),
+
+              ElevatedButton(
+                onPressed: () {
+                  filterProducts('Shoes');
+                },
+                child: const Text('Shoes'),
+              ),
+            ],
+          ),
+
+          Row(
+            mainAxisAlignment:
+            MainAxisAlignment.center,
+            children: [
+
+              ElevatedButton(
+                onPressed: () {
+                  sortProducts(true);
+                },
+                child: const Text(
+                  'Low → High',
+                ),
+              ),
+
+              const SizedBox(width: 10),
+
+              ElevatedButton(
+                onPressed: () {
+                  sortProducts(false);
+                },
+                child: const Text(
+                  'High → Low',
+                ),
+              ),
+            ],
+          ),
+
+
+          Expanded(
+            child: ListView.builder(
+              itemCount: displayedProducts.length,
+              itemBuilder: (context, index) {
+
+                final product =
+                displayedProducts[index];
+
+                return Card(
+                  margin: const EdgeInsets.all(10),
+
+                  child: ListTile(
+                    leading: const Icon(
+                      Icons.shopping_bag,
+                      size: 40,
+                    ),
+
+                    title: Text(
+                      product.name,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+
+                    subtitle: Text(
+                      product.category,
+                    ),
+
+                    trailing: Text(
+                      '₹${product.price}',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
