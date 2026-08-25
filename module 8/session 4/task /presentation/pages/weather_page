@@ -1,0 +1,132 @@
+import 'package:flutter/material.dart';
+
+import '../../domain/enities/weather.dart';
+import '../../domain/repositories/weather_repositories.dart';
+
+
+class WeatherPage extends StatefulWidget {
+  final WeatherRepository repository;
+
+  const WeatherPage({
+    super.key,
+    required this.repository,
+  });
+
+  @override
+  State<WeatherPage> createState() =>
+      _WeatherPageState();
+}
+
+class _WeatherPageState
+    extends State<WeatherPage> {
+
+  Weather? weather;
+  bool isLoading = false;
+  String? error;
+
+  Future<void> loadWeather() async {
+    setState(() {
+      isLoading = true;
+      error = null;
+    });
+
+    try {
+      final result =
+      await widget.repository.getWeather(
+        'Ahmedabad',
+      );
+
+      setState(() {
+        weather = result;
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        error = 'Failed to load weather';
+        isLoading = false;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    loadWeather();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Weather App',
+        ),
+      ),
+
+      body: Center(
+        child: isLoading
+            ? const CircularProgressIndicator()
+            : error != null
+            ? Text(
+          error!,
+          style: const TextStyle(
+            color: Colors.red,
+            fontSize: 18,
+          ),
+        )
+            : weather == null
+            ? const Text(
+          'No weather data',
+        )
+            : Column(
+          mainAxisAlignment:
+          MainAxisAlignment.center,
+          children: [
+
+            const Icon(
+              Icons.wb_sunny,
+              size: 80,
+              color: Colors.orange,
+            ),
+
+            const SizedBox(
+              height: 20,
+            ),
+
+            Text(
+              weather!.city,
+              style: const TextStyle(
+                fontSize: 28,
+                fontWeight:
+                FontWeight.bold,
+              ),
+            ),
+
+            const SizedBox(
+              height: 10,
+            ),
+
+            Text(
+              '${weather!.temperature}°C',
+              style: const TextStyle(
+                fontSize: 24,
+              ),
+            ),
+
+            const SizedBox(
+              height: 10,
+            ),
+
+            Text(
+              weather!.description,
+              style: const TextStyle(
+                fontSize: 18,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
