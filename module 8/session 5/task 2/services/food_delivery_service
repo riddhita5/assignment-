@@ -1,0 +1,11 @@
+class FoodDeliveryApiService {
+  List<String> fetchPopularRestaurants() {
+    return [
+      'Dominos',
+      'McDonalds',
+      'Burger King',
+      'Subway',
+      'KFC',
+    ];
+  }
+}
