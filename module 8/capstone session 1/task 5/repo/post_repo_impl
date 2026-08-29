@@ -1,0 +1,21 @@
+import '../../domain/entities/post.dart';
+import '../../domain/repo/post_repo.dart';
+
+class PostRepositoryImpl implements PostRepository {
+  @override
+  Future<List<Post>> fetchPosts() async {
+    // Simulating API call
+    await Future.delayed(
+      const Duration(seconds: 2),
+    );
+
+    return List.generate(
+      10,
+          (index) => Post(
+        id: index + 1,
+        title: 'Post ${index + 1}',
+        body: 'This is Instagram post ${index + 1}',
+      ),
+    );
+  }
+}
