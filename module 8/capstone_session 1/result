@@ -1,0 +1,7 @@
+# Architecture Review and Improvement
+
+I reviewed my InstaFeedClone folder structure and Bloc implementation using ChatGPT. The architecture already follows Clean Architecture by separating the presentation, domain, and data layers.
+
+One production-ready suggestion was to improve error handling. I applied this suggestion by adding error handling to the `PostRemoteDataSource` and updating the `PostBloc` to emit a user-friendly error message when fetching posts fails.
+
+This makes the application more reliable and prevents technical error details from being directly displayed to the user.
