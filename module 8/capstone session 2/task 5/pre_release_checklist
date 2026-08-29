@@ -1,0 +1,69 @@
+import 'package:flutter/material.dart';
+
+class PreReleaseChecklistScreen extends StatefulWidget {
+  const PreReleaseChecklistScreen({super.key});
+
+  @override
+  State<PreReleaseChecklistScreen> createState() => _PreReleaseChecklistScreenState();
+}
+
+class _PreReleaseChecklistScreenState extends State<PreReleaseChecklistScreen> {
+  final List<ChecklistItem> _checklist = [
+    ChecklistItem(title: 'Run all unit and widget tests'),
+    ChecklistItem(title: 'Update App Icon for Android and iOS'),
+    ChecklistItem(title: 'Verify all permissions in AndroidManifest.xml'),
+    ChecklistItem(title: 'Check for hardcoded API keys and remove them'),
+    ChecklistItem(title: 'Remove all print() and debugPrint() statements'),
+    ChecklistItem(title: 'Test the app on multiple device sizes'),
+    ChecklistItem(title: 'Verify ProGuard/R8 rules for release build'),
+    ChecklistItem(title: 'Check App Version and Build Number in pubspec.yaml'),
+    ChecklistItem(title: 'Ensure Firebase configuration files (google-services.json) are correct'),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Pre-release Checklist'),
+        backgroundColor: Colors.green[700],
+      ),
+      body: ListView.builder(
+        itemCount: _checklist.length,
+        itemBuilder: (context, index) {
+          return CheckboxListTile(
+            title: Text(_checklist[index].title),
+            value: _checklist[index].isDone,
+            onChanged: (val) {
+              setState(() {
+                _checklist[index].isDone = val!;
+              });
+            },
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          final missing = _checklist.where((item) => !item.isDone).length;
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(missing == 0 
+                ? 'All steps completed! Ready for release.' 
+                : 'Warning: $missing steps still remaining!'),
+              backgroundColor: missing == 0 ? Colors.green : Colors.orange,
+            ),
+          );
+        },
+        label: const Text('Verify Status'),
+        icon: const Icon(Icons.verified),
+        backgroundColor: Colors.green[700],
+      ),
+    );
+  }
+}
+
+class ChecklistItem {
+  final String title;
+  bool isDone;
+
+  ChecklistItem({required this.title, this.isDone = false});
+}
