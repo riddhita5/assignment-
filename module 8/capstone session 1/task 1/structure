@@ -1,0 +1,20 @@
+InstaFeedClone/
+│
+├── lib/
+│   │
+│   ├── presentation/
+│   │   ├── screens/
+│   │   ├── widgets/
+│   │   └── bloc/
+│   │
+│   ├── domain/
+│   │   ├── entities/
+│   │   ├── repositories/
+│   │   └── usecases/
+│   │
+│   └── data/
+│       ├── models/
+│       ├── repositories/
+│       └── datasources/
+│
+└── pubspec.yaml
