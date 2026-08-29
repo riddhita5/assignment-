@@ -1,0 +1,83 @@
+import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
+
+class ConfigValidatorScreen extends StatefulWidget {
+  const ConfigValidatorScreen({super.key});
+
+  @override
+  State<ConfigValidatorScreen> createState() => _ConfigValidatorScreenState();
+}
+
+class _ConfigValidatorScreenState extends State<ConfigValidatorScreen> {
+  Map<String, bool> configStatus = {
+    'Camera Permission': false,
+    'Storage Permission': false,
+    'Location Permission': false,
+    'Internet Permission': true, // Usually granted by default
+  };
+
+  @override
+  void initState() {
+    super.initState();
+    _checkPermissions();
+  }
+
+  Future<void> _checkPermissions() async {
+    Map<String, bool> updatedStatus = {};
+    updatedStatus['Camera Permission'] = await Permission.camera.status.isGranted;
+    updatedStatus['Storage Permission'] = await Permission.storage.status.isGranted;
+    updatedStatus['Location Permission'] = await Permission.location.status.isGranted;
+    updatedStatus['Internet Permission'] = true;
+
+    setState(() {
+      configStatus = updatedStatus;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Config Validator (Task 3)'),
+        backgroundColor: Colors.blueGrey,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Validation Checklist:',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 20),
+            ...configStatus.entries.map((entry) => ListTile(
+                  leading: Icon(
+                    entry.value ? Icons.check_circle : Icons.error,
+                    color: entry.value ? Colors.green : Colors.red,
+                  ),
+                  title: Text(entry.key),
+                  subtitle: Text(entry.value ? 'Configured/Granted' : 'Missing/Denied'),
+                )),
+            const Spacer(),
+            const Card(
+              color: Colors.amberAccent,
+              child: Padding(
+                padding: EdgeInsets.all(12.0),
+                child: Text(
+                  'Note: Ensure API Keys are added in AndroidManifest.xml and Info.plist for Release Mode.',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: _checkPermissions,
+              child: const Text('Re-Validate Configuration'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
