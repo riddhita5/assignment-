@@ -1,0 +1,15 @@
+# InstaFeedClone – Social Feed App
+
+InstaFeedClone is a simple social media application built with Flutter. Users can explore posts through a clean and easy-to-use feed interface.
+
+The app uses Flutter, Bloc state management, Clean Architecture, and dependency injection with get_it. The architecture separates the presentation, domain, and data layers, making the application easier to maintain and extend.
+
+### Key Features
+
+* Clean and simple user interface
+* Social media style post feed
+* Efficient ListView.builder
+* Bloc-based state management
+* Loading and error handling
+* Clean Architecture
+* Dependency Injection using get_it
