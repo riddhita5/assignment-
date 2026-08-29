@@ -1,0 +1,22 @@
+# Flutter Flavors Setup Guide for a Food Delivery App
+
+1. **Create Three Environments**
+   Set up three environments for the food delivery app: **Development (dev), Staging (staging), and Production (prod)**.
+
+2. **Use Consistent Naming Conventions**
+   Use simple and consistent names such as `dev`, `staging`, and `prod` for all environments.
+
+3. **Configure Android Flavors**
+   Configure separate Android flavors so each environment can have its own app configuration, package name, and settings.
+
+4. **Configure iOS Schemes**
+   For iOS, create separate schemes for **dev, staging, and prod** so each environment can be built and tested independently.
+
+5. **Set Environment-Specific Configuration**
+   Configure different API base URLs, app names, icons, Firebase settings, and other required settings for each environment.
+
+6. **Run and Test Each Flavor**
+   Run the Development flavor for regular development, Staging for QA/testing, and Production for the live application.
+
+7. **Verify Before Production Release**
+   Test the Staging environment thoroughly and make sure the Production flavor uses the correct live API and production settings before releasing the app.
