@@ -1,0 +1,1 @@
+I used const for widgets whose values do not change, such as Text, SizedBox, TextStyle, and MaterialApp. After implementing this optimization, the unchanged widgets can be reused instead of being recreated unnecessarily during rebuilds. This can improve rebuild efficiency, especially in larger widget trees.
