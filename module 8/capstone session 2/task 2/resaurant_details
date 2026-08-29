@@ -1,0 +1,53 @@
+import 'package:flutter/material.dart';
+
+class Restaurant {
+  final String? name; // Intentionally nullable for Task 2
+  final String address;
+  final double rating;
+
+  Restaurant({this.name, required this.address, required this.rating});
+}
+
+class ZomatoDetailsScreen extends StatelessWidget {
+  const ZomatoDetailsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // SIMULATING RUNTIME ERROR: name is null
+    final restaurant = Restaurant(
+      name: null, // Error: Text widget expects a non-null string
+      address: '123 Food Street, Ahmedabad',
+      rating: 4.5,
+    );
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Restaurant Details'),
+        backgroundColor: Colors.redAccent,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // This line will cause a crash: "Text(null)" is not allowed
+            // FIX: Use Text(restaurant.name ?? 'Unknown Restaurant')
+            Text(
+              restaurant.name!, // Crash here: Unexpected null value
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            Text(restaurant.address),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                const Icon(Icons.star, color: Colors.green),
+                Text('${restaurant.rating}'),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
