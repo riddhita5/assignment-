@@ -1,0 +1,24 @@
+Open your Flutter project and use the Flutter DevTools Widget Inspector to identify any widget in your home screen that is rebuilding unnecessarily when you tap a button elsewhere on the screen.
+
+Ans:-  # Identifying Unnecessary Widget Rebuilds Using Flutter DevTools
+
+1. **Open the Flutter Project**
+   Open the Flutter project in Android Studio or VS Code and run the application.
+
+2. **Open Flutter DevTools**
+   Start Flutter DevTools and open the **Widget Inspector** to view the widget tree of the Home Screen.
+
+3. **Select the Home Screen**
+   In the Widget Inspector, select the Home Screen and observe its widgets, such as buttons, text, containers, lists, and other UI elements.
+
+4. **Enable Rebuild Tracking**
+   Use the Widget Inspector's rebuild information to identify widgets that rebuild when the UI state changes.
+
+5. **Tap a Button**
+   Tap a button on the Home Screen that changes some part of the screen. Observe which widgets rebuild after the button is tapped.
+
+6. **Identify Unnecessary Rebuilds**
+   Check whether unrelated widgets, such as a static title, image, or container, are also rebuilding even though their content has not changed.
+
+7. **Record the Result**
+   Note the widget that rebuilds unnecessarily. For example, if tapping a counter button rebuilds a static `Text` widget or an unrelated `Container`, that widget can be considered an unnecessary rebuild.
