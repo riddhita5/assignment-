@@ -1,0 +1,109 @@
+import 'package:flutter/material.dart';
+
+class CartItem {
+  final String id;
+  final String name;
+  final double price;
+
+  CartItem({required this.id, required this.name, required this.price});
+}
+
+class FlipkartCartScreen extends StatefulWidget {
+  const FlipkartCartScreen({super.key});
+
+  @override
+  State<FlipkartCartScreen> createState() => _FlipkartCartScreenState();
+}
+
+class _FlipkartCartScreenState extends State<FlipkartCartScreen> {
+  final List<CartItem> _items = [
+    CartItem(id: '1', name: 'iPhone 15', price: 79900),
+    CartItem(id: '2', name: 'MacBook Air', price: 99900),
+  ];
+
+  void _addItem() {
+    setState(() {
+      _items.add(CartItem(
+        id: DateTime.now().toString(),
+        name: 'New Product ${_items.length + 1}',
+        price: 500.0,
+      ));
+    });
+  }
+
+  void _removeItem(int index) {
+    setState(() {
+      _items.removeAt(index);
+    });
+  }
+
+  void _checkout() {
+    if (_items.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Cart is empty!')),
+      );
+      return;
+    }
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Checkout Success'),
+        content: Text('Ordered ${_items.length} items successfully.'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              setState(() => _items.clear());
+              Navigator.pop(context);
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Flipkart Cart - Smoke Test'),
+        backgroundColor: Colors.blue,
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              itemCount: _items.length,
+              itemBuilder: (context, index) {
+                final item = _items[index];
+                return ListTile(
+                  title: Text(item.name),
+                  subtitle: Text('₹${item.price}'),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.delete, color: Colors.red),
+                    onPressed: () => _removeItem(index),
+                  ),
+                );
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: ElevatedButton(
+              onPressed: _checkout,
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size.fromHeight(50),
+                backgroundColor: Colors.orange,
+              ),
+              child: const Text('CHECKOUT', style: TextStyle(fontSize: 18)),
+            ),
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _addItem,
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
+}
