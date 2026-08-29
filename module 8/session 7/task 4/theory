@@ -1,0 +1,7 @@
+# Flutter Performance Profiling – Product List
+
+I created a simulated product list containing 1000 products using `ListView.builder`. I ran the application in Profile mode and recorded a short session in Flutter DevTools while rapidly scrolling through the list.
+
+During the recording, I checked the Performance Timeline for long frame times and dropped frames. The list scrolled smoothly, and no significant jank was observed. The `ListView.builder` efficiently built the list items as they were needed.
+
+**Result:** No significant performance issue or jank was detected during the test. The main widget involved in rendering the products was `ListView.builder`, with the individual product UI created inside its `itemBuilder`.
