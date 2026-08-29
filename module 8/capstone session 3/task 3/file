@@ -1,0 +1,22 @@
+# Flutter Play Store Submission Checklist
+
+1. **Freeze the code** – Stop adding new features and make sure the final version of the app is ready.
+
+2. **Test the application** – Test all major features, navigation, API calls, login, payments, and different screen sizes.
+
+3. **Update app information** – Set the final app name, package/application ID, version code, and version name.
+
+4. **Configure release signing** – Create a release keystore and configure the signing details securely in the Android project.
+
+5. **Check app permissions** – Remove unnecessary permissions and verify that all required permissions are properly declared.
+
+6. **Build a release AAB** – Generate the production Android App Bundle using:
+   `flutter build appbundle --release`
+
+7. **Test the release build** – Install and test the release version to ensure there are no crashes or major issues.
+
+8. **Prepare Play Store assets** – Create the app icon, screenshots, feature graphic, app description, privacy policy, and other required store information.
+
+9. **Create the Play Console release** – Create/select the application in Google Play Console and upload the signed `.aab` file to the appropriate testing or production track.
+
+10. **Review and submit** – Complete the required Play Console forms, check warnings/errors, and submit the release for Google Play review.
