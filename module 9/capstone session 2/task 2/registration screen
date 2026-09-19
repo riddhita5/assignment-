@@ -1,0 +1,181 @@
+import 'package:flutter/material.dart';
+
+class RegistrationScreen extends StatefulWidget {
+  const RegistrationScreen({super.key});
+
+  @override
+  State<RegistrationScreen> createState() => _RegistrationScreenState();
+}
+
+class _RegistrationScreenState extends State<RegistrationScreen> {
+  final usernameController = TextEditingController();
+  final emailController = TextEditingController();
+  final phoneController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  String? usernameError;
+  String? emailError;
+  String? phoneError;
+  String? passwordError;
+
+  void validateForm() {
+    setState(() {
+      usernameError = null;
+      emailError = null;
+      phoneError = null;
+      passwordError = null;
+
+      // Username validation
+      if (usernameController.text.trim().isEmpty) {
+        usernameError = 'Please enter username';
+      }
+
+      // Email validation
+      if (emailController.text.trim().isEmpty) {
+        emailError = 'Please enter email';
+      } else if (!emailController.text.contains('@')) {
+        emailError = 'Please enter a valid email';
+      }
+
+      // Phone validation
+      if (phoneController.text.trim().isEmpty) {
+        phoneError = 'Please enter phone number';
+      } else if (phoneController.text.length != 10) {
+        phoneError = 'Phone number must be exactly 10 digits';
+      } else if (!RegExp(r'^[0-9]+$').hasMatch(phoneController.text)) {
+        phoneError = 'Phone number must contain only digits';
+      }
+
+      // Password validation
+      if (passwordController.text.isEmpty) {
+        passwordError = 'Please enter password';
+      }
+    });
+
+    if (usernameError == null &&
+        emailError == null &&
+        phoneError == null &&
+        passwordError == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Registration Successful!'),
+        ),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    usernameController.dispose();
+    emailController.dispose();
+    phoneController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Food Delivery Registration'),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          children: [
+            const Icon(
+              Icons.delivery_dining,
+              size: 80,
+              color: Colors.deepOrange,
+            ),
+
+            const SizedBox(height: 20),
+
+            const Text(
+              'Create Account',
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+
+            const SizedBox(height: 30),
+
+            // Username
+            TextField(
+              controller: usernameController,
+              decoration: InputDecoration(
+                labelText: 'Username',
+                hintText: 'Enter username',
+                prefixIcon: const Icon(Icons.person),
+                border: const OutlineInputBorder(),
+                errorText: usernameError,
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // Email
+            TextField(
+              controller: emailController,
+              keyboardType: TextInputType.emailAddress,
+              decoration: InputDecoration(
+                labelText: 'Email',
+                hintText: 'Enter email',
+                prefixIcon: const Icon(Icons.email),
+                border: const OutlineInputBorder(),
+                errorText: emailError,
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // Phone
+            TextField(
+              controller: phoneController,
+              keyboardType: TextInputType.phone,
+              maxLength: 10,
+              decoration: InputDecoration(
+                labelText: 'Phone',
+                hintText: 'Enter 10-digit phone number',
+                prefixIcon: const Icon(Icons.phone),
+                border: const OutlineInputBorder(),
+                errorText: phoneError,
+                counterText: '',
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // Password
+            TextField(
+              controller: passwordController,
+              obscureText: true,
+              decoration: InputDecoration(
+                labelText: 'Password',
+                hintText: 'Enter password',
+                prefixIcon: const Icon(Icons.lock),
+                border: const OutlineInputBorder(),
+                errorText: passwordError,
+              ),
+            ),
+
+            const SizedBox(height: 30),
+
+            SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: ElevatedButton(
+                onPressed: validateForm,
+                child: const Text(
+                  'Register',
+                  style: TextStyle(fontSize: 18),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
