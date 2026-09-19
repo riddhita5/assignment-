@@ -1,0 +1,29 @@
+import 'package:flutter/material.dart';
+
+class SplashScreen extends StatelessWidget {
+  const SplashScreen({super.key});
+
+  final bool isLoggedIn = false;
+
+  @override
+  Widget build(BuildContext context) {
+    Future.delayed(const Duration(seconds: 2), () {
+      if (!context.mounted) return;
+
+      if (isLoggedIn) {
+        Navigator.pushReplacementNamed(context, '/dashboard');
+      } else {
+        Navigator.pushReplacementNamed(context, '/login');
+      }
+    });
+
+    return const Scaffold(
+      body: Center(
+        child: Text(
+          'Splash Screen',
+          style: TextStyle(fontSize: 24),
+        ),
+      ),
+    );
+  }
+}
