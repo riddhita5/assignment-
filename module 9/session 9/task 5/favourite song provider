@@ -1,0 +1,33 @@
+import 'package:flutter/foundation.dart';
+
+class FavoritePlaylistProvider extends ChangeNotifier {
+  final List<String> _favoritePlaylists = [];
+
+  List<String> get favoritePlaylists => _favoritePlaylists;
+
+  void addPlaylist(String playlist) {
+    if (!_favoritePlaylists.contains(playlist)) {
+      _favoritePlaylists.add(playlist);
+      notifyListeners();
+    }
+  }
+
+  void removePlaylist(String playlist) {
+    _favoritePlaylists.remove(playlist);
+    notifyListeners();
+  }
+
+  bool isFavorite(String playlist) {
+    return _favoritePlaylists.contains(playlist);
+  }
+
+  void toggleFavorite(String playlist) {
+    if (_favoritePlaylists.contains(playlist)) {
+      _favoritePlaylists.remove(playlist);
+    } else {
+      _favoritePlaylists.add(playlist);
+    }
+
+    notifyListeners();
+  }
+}
