@@ -1,0 +1,15 @@
+import 'package:flutter/foundation.dart';
+
+class CartProvider extends ChangeNotifier {
+  final List<String> products = [];
+
+  void addProduct(String product) {
+    products.add(product);
+    notifyListeners();
+  }
+
+  void removeProduct(String product) {
+    products.remove(product);
+    notifyListeners();
+  }
+}
